@@ -15,6 +15,7 @@ let brett = [
 import ANSI from "./ANSI.mjs"
 import renderBrett from "./superbrett.mjs";
 import dictionary from "./dictionary.mjs";
+//import { deleteCookie } from "undici-types";//
 
 
 let brett = [
@@ -33,31 +34,55 @@ const spiller2 = -1;
 let resultatAvSpill = "";
 let spiller = spiller1;
 let isGameOver = false
+let sp1navn = dictionary.no.spill1Navn;
+let sp2navn = dictionary.no.spill2Navn;
+
+await velgSpillerNavn ()
+
+
 
 while (isGameOver == false) {
 
     console.log(ANSI.CLEAR_SCREEN, ANSI.CURSOR_HOME);
     console.log(renderBrett(brett));
-    console.log(dictionary.no.turn);
+
+    if(spiller == 1) {
+        console.log(`${dictionary.no.spiller} ${sp1navn} ${dictionary.no.turn}`);
+    } else {
+        console.log(`${dictionary.no.spiller} ${sp2navn} ${dictionary.no.turn}`);
+    }
+
 
     let rad = -1;
     let kolone = -1;
 
+    let areNumbers = false;
     do {
-        let pos = await rl.question("Hvor setter du merket ditt? ");
-        [rad, kolone] = pos.split(",")
+        
+
+        let pos = await rl.question(`${dictionary.no.merket} `);
+      
+        [rad, kolone] = pos.split(",");
         rad = rad - 1;
         kolone = kolone - 1;
-    } while (brett[rad][kolone] != 0)
 
+        if(isNaN(rad) == false && isNaN(kolone) == false){ //sjekker om både rad og kollene er tall
+            areNumbers = true;  //setter hjelpevariabel til true
+        }
+
+
+    } while (brett[rad][kolone] != 0 && areNumbers == true)
+    
+    areNumbers = false;
+    
     brett[rad][kolone] = spiller;
 
     let vinner = harNoenVunnet(brett);
     if (vinner != 0) {
         isGameOver = true;
-        resultatAvSpill = `Vinneren er ${spillerNavn(vinner)}`;
+        resultatAvSpill = `${dictionary.no.vinner} ${spillerNavn(vinner)}`;
     } else if (erSpilletUavgjort(brett)) {
-        resultatAvSpill = "Det ble uavgjort";
+        resultatAvSpill = `${dictionary.no.uavgjort}`;
         isGameOver = true;
     }
 
@@ -117,10 +142,16 @@ function erSpilletUavgjort(brett) {
 
 function spillerNavn(sp = spiller) {
     if (sp == spiller1) {
-        return "Spiller 1(X)";
+        return sp1navn;
     } else {
-        return "Spiller 2(O)";
+        return sp2navn;
     }
+}
+
+async function velgSpillerNavn(spillerNavn) {
+    sp1navn = await rl.question(dictionary.no.velgNavn1);
+    sp2navn = await rl.question(dictionary.no.velgNavn2);
+    return { sp1navn, sp2navn };
 }
 
 function byttAktivSpiller() {

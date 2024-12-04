@@ -23,12 +23,12 @@ function evaluate(verdi){
   let visning = "";
   if (verdi == 0) {
     visning += " "
-} else if (verdi == spiller1) {
-  visning += ANSI.COLOR.GREEN + "X" + ANSI.COLOR_RESET;
-} else {
-  visning += ANSI.COLOR.RED + "O" + ANSI.COLOR_RESET;
-}
-return visning;
+  } else if (verdi == spiller1) {
+    visning += ANSI.COLOR.GREEN + "X" + ANSI.COLOR_RESET;
+  } else {
+    visning += ANSI.COLOR.RED + "O" + ANSI.COLOR_RESET;
+  }
+  return visning;
 }
 
 const ev = evaluate;
